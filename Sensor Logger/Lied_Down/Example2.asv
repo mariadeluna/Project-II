@@ -1,0 +1,40 @@
+name = 'Accelerometer.csv';
+
+
+
+opts = detectImportOptions(name);
+opts.SelectedVariableNames = [2 3 4 5];  % Seleccionamos solo las columnas de interés, aquí la segunda y tercera
+datos = readtable(name, opts);
+datosArray = table2array(datos);
+
+% Extraer el vector de tiempo y los datos del eje z
+tiempo = datos{:, 1}; % Asumiendo que la primera columna seleccionada es el tiempo
+ejes = datosArray(:, 2:4);   % Asumiendo que la segunda columna seleccionada son los datos del eje z
+
+
+Fs=1000;
+f_c=25;
+Wn = f_c/(Fs/2); % Normalize
+N=6;
+[b, a] = butter(N, Wn, 'low'); % Filter coefficients
+
+
+ejes_filt = filtfilt(b, a, ejes);
+
+
+
+% Graficar la señal del eje z
+figure;
+plot(tiempo, ejes_filt);
+xlabel('Tiempo (s)');
+ylabel('Amplitud del eje Z');
+title('Datos del Acelerómetro - Eje Z');
+
+
+
+
+
+
+
+
+
