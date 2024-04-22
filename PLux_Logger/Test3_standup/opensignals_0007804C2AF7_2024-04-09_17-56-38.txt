@@ -3,7 +3,9 @@
 "device connection": "BTH00:07:80:4C:2A:F7", "sampling rate": 1000, 
 "resolution": [12, 12, 12, 12], "firmware version": 512, "comments": "", "keywords": "",
  "mode": 0, "sync interval": 2, "date": "2024-4-9", "time": "17:57:53.722", "channels": [1, 2, 3, 4], 
-"sensor": ["XYZ", "XYZ", "XYZ", "ECG"], "label": ["x", "y", "z", "ECG"], "column": ["nSeq", "DI", "x", "y", "z", "ECG"], "special": [{}, {}, {}, {}], "digital IO": [0, 1], "convertedValues": 0}}
+"sensor": ["XYZ", "XYZ", "XYZ", "ECG"], "label": ["x", "y", "z", "ECG"], 
+"column": ["nSeq", "DI", "x", "y", "z", "ECG"],
+ "special": [{}, {}, {}, {}], "digital IO": [0, 1], "convertedValues": 0}}
 # EndOfHeader
 0	0	930	785	735	2236	
 1	0	930	785	735	2215	

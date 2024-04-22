@@ -1,15 +1,19 @@
 % BIOPLUX
 
-name = 'opensignals_0007804C2AF7_2024-04-07_09-31-42 (1).txt';
+name = 'opensignals_0007804C2AF7_2024-04-15_20-35-21.txt';
 
 data = readtable(name);
-dataArray = table2array(data);
+dataArrayPlux = table2array(data);
 
 
-startIndex = 18508 ;
 
 
-ECGdata=dataArray(startIndex:end, 6); % Choose only relevant channels
+%36':41'' - 36':37.381'' = 3619 milliseconds
+
+startIndex =3619;
+
+
+ECGdata=dataArrayPlux(startIndex:end, 6); % Choose only relevant channelss
 
 % Center the ECG signal. Adjust the signal so that its average value is
 % zero. Substracting the average from every point of the signal shifts the
@@ -18,33 +22,33 @@ meanECG=mean(ECGdata);
 ECGdata=ECGdata-meanECG;
 
 Fs=1000; % Used to record the signal
-f_c=40;
+f_c=60;
 Wn = f_c/(Fs/2); % Normalize
 
 N=6;
 [b, a] = butter(N, Wn, 'low'); % Filter coefficients
 
 ecg_filtered = filtfilt(b, a, ECGdata);
-t = dataArray(startIndex:end, 1);
+t = dataArrayPlux(startIndex:end, 1)/Fs;
 t = t - t(1); 
 % Subtract the initial time value to realign the time vector to start from zero
 
 
-
 % Plot the signal filtered
 figure;
-subplot(4,1,1); 
+ax1=subplot(4,1,1); 
 plot(t,ecg_filtered);
 title('ECG BioPlux Sensor');
 xlabel('Time (s)');
 ylabel(' mV');
+axis tight;
 
 
 % SCG function
 
-scg_x=dataArray(startIndex:end, 3); 
-scg_y=dataArray(startIndex:end, 4);
-scg_z=dataArray(startIndex:end, 5); 
+scg_x=dataArrayPlux(startIndex:end, 3); 
+scg_y=dataArrayPlux(startIndex:end, 4);
+scg_z=dataArrayPlux(startIndex:end, 5); 
 
 % Design a bandpass filter using the designfilt function
 bpFilt = designfilt('bandpassiir', 'FilterOrder', 4, ...
@@ -60,35 +64,111 @@ scg_z_filtered = filtfilt(bpFilt, scg_z);
 
 
 
-subplot(4,1,2); % First graphic scg
+ax2=subplot(4,1,2); % First graphic scg
 plot(t, scg_x_filtered);
 title('Acceleration in X');
 xlabel('Time (s)');
 ylabel(' (m/s^2)');
+axis tight;
 
 
-subplot(4,1,3); % Second graphic 
+ax3=subplot(4,1,3); % Second graphic 
 plot(t, scg_y_filtered);
 title('Acceleration in Y');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
+axis tight;
 
 
 
-subplot(4,1,4); % Third graphic
+ax4=subplot(4,1,4); % Third graphic
 plot(t, scg_z_filtered);
 title('Acceleration in Z');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
+axis tight;
 
-
+linkaxes([ax1, ax2, ax3, ax4], 'x');
 
 
 % SENSOR LOGGER
 
-% Airpods
+
+% Headphones
 
 name = 'Headphone.csv';
+
+
+opts = detectImportOptions(name);
+opts.SelectedVariableNames = [2 11 17 19];  
+data = readtable(name, opts);
+dataArray = table2array(data);
+
+
+
+ Fs=100;
+
+
+scg_x=dataArray(:, 3 ); 
+scg_y=dataArray(:, 4); 
+scg_z=dataArray(:, 2); 
+
+% Design a bandpass filter using the designfilt function
+bpFilt = designfilt('bandpassiir', 'FilterOrder',4 , ...
+         'HalfPowerFrequency1', 0.8, 'HalfPowerFrequency2', 35, ...
+         'SampleRate', Fs); 
+
+% Apply the filter
+scg_x_filtered = filtfilt(bpFilt, scg_x);
+scg_y_filtered = filtfilt(bpFilt, scg_y);
+scg_z_filtered = filtfilt(bpFilt, scg_z);
+
+t2 = dataArray(:, 1); 
+
+% in .txt nseq while .csv seconds elapsed
+
+figure;
+ax1=subplot(4,1,1);
+plot(t, ecg_filtered);
+title('ECG Headphones');
+xlabel('Time (s)');
+ylabel(' mV');
+axis tight;
+
+
+
+ax2=subplot(4,1,2); % First graphic scg
+plot(t2, scg_x_filtered);
+title('Acceleration in X');
+xlabel('Time (s)');
+ylabel(' (m/s^2)');
+axis tight;
+
+
+ax3=subplot(4,1,3); % Second graphic 
+plot(t2, scg_y_filtered);
+title('Acceleration in Y');
+xlabel('Time (s)');
+ylabel('(m/s^2)');
+axis tight;
+
+
+
+ax4=subplot(4,1,4); % Third graphic
+plot(t2, scg_z_filtered);
+title('Acceleration in Z');
+xlabel('Time (s)');
+ylabel('(m/s^2)');
+
+axis tight;
+
+linkaxes([ax1, ax2, ax3, ax4], 'x');
+
+
+
+% Mobile phone on the shoulder
+
+name = 'Accelerometer.csv';
 
 
 opts = detectImportOptions(name);
@@ -97,13 +177,11 @@ data = readtable(name, opts);
 dataArray = table2array(data);
 
 
-t2 = dataArray(1:1124, 1); 
  Fs=100;
-
-
-scg_x=dataArray(1:1124, 4); 
-scg_y=dataArray(1:1124, 3); 
-scg_z=dataArray(1:1124, 2); 
+t2 = dataArray(:, 1); 
+scg_x=dataArray(:, 4); 
+scg_y=dataArray(:, 3); 
+scg_z=dataArray(:, 2); 
 
 % Design a bandpass filter using the designfilt function
 bpFilt = designfilt('bandpassiir', 'FilterOrder',4 , ...
@@ -117,32 +195,36 @@ scg_z_filtered = filtfilt(bpFilt, scg_z);
 
 
 figure;
-subplot(4,1,1);
+ax1=subplot(4,1,1);
 plot(t, ecg_filtered);
-title('ECG Headphones');
+title('ECG Mobile Phone' );
 xlabel('Time (s)');
-ylabel(' (m/s^2)');
+ylabel(' mV');
+axis tight;
 
-
-
-subplot(4,1,2); % First graphic scg
+ax2=subplot(4,1,2); % First graphic scg
 plot(t2, scg_x_filtered);
 title('Acceleration in X');
 xlabel('Time (s)');
 ylabel(' (m/s^2)');
+axis tight;
 
 
-subplot(4,1,3); % Second graphic 
+ax3=subplot(4,1,3); % Second graphic 
 plot(t2, scg_y_filtered);
 title('Acceleration in Y');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
+axis tight;
 
 
-
-subplot(4,1,4); % Third graphic
+ax4=subplot(4,1,4); % Third graphic
 plot(t2, scg_z_filtered);
 title('Acceleration in Z');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
+axis tight;
+
+linkaxes([ax1, ax2, ax3, ax4], 'x');
+
 
