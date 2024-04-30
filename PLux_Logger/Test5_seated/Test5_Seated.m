@@ -34,12 +34,13 @@ t = t - t(1);
 
 % Plot the signal filtered
 figure;
-ax1=subplot(4,1,1); 
+ax1=subplot(5,1,1); 
 plot(t,ecg_filtered);
 title('ECG BioPlux Sensor');
 xlabel('Time (s)');
 ylabel(' mV');
 axis tight;
+
 
 
 % SCG function
@@ -50,7 +51,7 @@ scg_z=dataArrayPlux(startIndex:end, 5);
 
 % Design a bandpass filter using the designfilt function
 bpFilt = designfilt('bandpassiir', 'FilterOrder', 4, ...
-         'HalfPowerFrequency1', 0.8, 'HalfPowerFrequency2', 35, ...
+         'HalfPowerFrequency1', 1, 'HalfPowerFrequency2', 15, ...
          'SampleRate', Fs); 
 % Lower and upper frequency edge of the passband for a bandpass filter
 % Signals below and these frequencies will be attenuated by more than 3 dB
@@ -61,8 +62,9 @@ scg_y_filtered = filtfilt(bpFilt, scg_y);
 scg_z_filtered = filtfilt(bpFilt, scg_z);
 
 
+magnitude = sqrt(scg_x_filtered.^2 + scg_y_filtered.^2 + scg_z_filtered.^2);
 
-ax2=subplot(4,1,2); % First graphic scg
+ax2=subplot(5,1,2); % First graphic scg
 plot(t, scg_x_filtered);
 title('Acceleration in X');
 xlabel('Time (s)');
@@ -70,7 +72,7 @@ ylabel(' (m/s^2)');
 axis tight;
 
 
-ax3=subplot(4,1,3); % Second graphic 
+ax3=subplot(5,1,3); % Second graphic 
 plot(t, scg_y_filtered);
 title('Acceleration in Y');
 xlabel('Time (s)');
@@ -79,14 +81,23 @@ axis tight;
 
 
 
-ax4=subplot(4,1,4); % Third graphic
+ax4=subplot(5,1,4); % Third graphic
 plot(t, scg_z_filtered);
 title('Acceleration in Z');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
 axis tight;
 
-linkaxes([ax1, ax2, ax3, ax4], 'x');
+
+ax5=subplot(5,1,5); % module
+plot(t, magnitude);
+title('Magnitude of Acceleration');
+xlabel('Time (s)');
+ylabel('Acceleration (m/s^2)');
+axis tight;
+
+
+linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 
 % SENSOR LOGGER
@@ -114,7 +125,7 @@ scg_z=dataArray(:, 2);
 
 % Design a bandpass filter using the designfilt function
 bpFilt = designfilt('bandpassiir', 'FilterOrder',4 , ...
-         'HalfPowerFrequency1', 0.8, 'HalfPowerFrequency2', 35, ...
+         'HalfPowerFrequency1',1, 'HalfPowerFrequency2', 15, ...
          'SampleRate', Fs); 
 
 % Apply the filter
@@ -124,17 +135,17 @@ scg_z_filtered = filtfilt(bpFilt, scg_z);
 
 
 % in .txt nseq while .csv seconds elapsed
+magnitude = sqrt(scg_x_filtered.^2 + scg_y_filtered.^2 + scg_z_filtered.^2);
+
 figure;
-ax1=subplot(4,1,1);
-plot(t, ecg_filtered);
+ax1=subplot(5,1,1); 
+plot(t,ecg_filtered);
 title('ECG Headphones');
 xlabel('Time (s)');
 ylabel(' mV');
 axis tight;
 
-
-
-ax2=subplot(4,1,2); % First graphic scg
+ax2=subplot(5,1,2); % First graphic scg
 plot(t2, scg_x_filtered);
 title('Acceleration in X');
 xlabel('Time (s)');
@@ -142,7 +153,7 @@ ylabel(' (m/s^2)');
 axis tight;
 
 
-ax3=subplot(4,1,3); % Second graphic 
+ax3=subplot(5,1,3); % Second graphic 
 plot(t2, scg_y_filtered);
 title('Acceleration in Y');
 xlabel('Time (s)');
@@ -151,16 +162,22 @@ axis tight;
 
 
 
-ax4=subplot(4,1,4); % Third graphic
+ax4=subplot(5,1,4); % Third graphic
 plot(t2, scg_z_filtered);
 title('Acceleration in Z');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
-
 axis tight;
 
-linkaxes([ax1, ax2, ax3, ax4], 'x');
 
+ax5=subplot(5,1,5); % module
+plot(t2, magnitude);
+title('Magnitude of Acceleration');
+xlabel('Time (s)');
+ylabel('Acceleration (m/s^2)');
+axis tight;
+
+linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 
 % Mobile phone on the shoulder
@@ -186,7 +203,7 @@ scg_z=dataArray(:, 2);
 
 % Design a bandpass filter using the designfilt function
 bpFilt = designfilt('bandpassiir', 'FilterOrder',4 , ...
-         'HalfPowerFrequency1', 0.8, 'HalfPowerFrequency2', 35, ...
+         'HalfPowerFrequency1', 1, 'HalfPowerFrequency2', 15, ...
          'SampleRate', Fs); 
 
 % Apply the filter
@@ -195,15 +212,17 @@ scg_y_filtered = filtfilt(bpFilt, scg_y);
 scg_z_filtered = filtfilt(bpFilt, scg_z);
 
 
+magnitude = sqrt(scg_x_filtered.^2 + scg_y_filtered.^2 + scg_z_filtered.^2);
+
 figure;
-ax1=subplot(4,1,1);
-plot(t, ecg_filtered);
-title('ECG Mobile Phone' );
+ax1=subplot(5,1,1); 
+plot(t,ecg_filtered);
+title('ECG Mobile Phone');
 xlabel('Time (s)');
 ylabel(' mV');
 axis tight;
 
-ax2=subplot(4,1,2); % First graphic scg
+ax2=subplot(5,1,2); % First graphic scg
 plot(t2, scg_x_filtered);
 title('Acceleration in X');
 xlabel('Time (s)');
@@ -211,7 +230,7 @@ ylabel(' (m/s^2)');
 axis tight;
 
 
-ax3=subplot(4,1,3); % Second graphic 
+ax3=subplot(5,1,3); % Second graphic 
 plot(t2, scg_y_filtered);
 title('Acceleration in Y');
 xlabel('Time (s)');
@@ -219,13 +238,23 @@ ylabel('(m/s^2)');
 axis tight;
 
 
-ax4=subplot(4,1,4); % Third graphic
+
+ax4=subplot(5,1,4); % Third graphic
 plot(t2, scg_z_filtered);
 title('Acceleration in Z');
 xlabel('Time (s)');
 ylabel('(m/s^2)');
 axis tight;
 
-linkaxes([ax1, ax2, ax3, ax4], 'x');
+
+ax5=subplot(5,1,5); % module
+plot(t2, magnitude);
+title('Magnitude of Acceleration');
+xlabel('Time (s)');
+ylabel('Acceleration (m/s^2)');
+axis tight;
+
+
+linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 

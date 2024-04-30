@@ -17,25 +17,25 @@ scg_x=dataArray(500:10000, 4);
 scg_y=dataArray(500:10000, 3); 
 scg_z=dataArray(500:10000, 2); 
 
-% Design a bandpass filter using the designfilt function
-% bpFilt = designfilt('bandpassiir', 'FilterOrder',4, ...
-%          'HalfPowerFrequency1', 1, 'HalfPowerFrequency2', 9, ...
-%          'SampleRate', Fs); 
+%Design a bandpass filter using the designfilt function
+bpFilt = designfilt('bandpassiir', 'FilterOrder',6, ...
+         'HalfPowerFrequency1', 0.8, 'HalfPowerFrequency2', 35, ...
+         'SampleRate', Fs); 
 
 % Apply the filter
+% 
+% cut_off= 15;
+% Wn = cut_off / (Fs/2);
+% [b, a] = butter(3, Wn, 'low');
 
-cut_off= 15;
-Wn = cut_off / (Fs/2);
-[b, a] = butter(3, Wn, 'low');
 
+scg_x_filtered = filtfilt(bpFilt, scg_x);
+scg_y_filtered = filtfilt(bpFilt, scg_y);
+scg_z_filtered = filtfilt(bpFilt, scg_z);
 
-% scg_x_filtered = filtfilt(bpFilt, scg_x);
-% scg_y_filtered = filtfilt(bpFilt, scg_y);
-% scg_z_filtered = filtfilt(bpFilt, scg_z);
-
-scg_x_filtered = filtfilt(b,a, scg_x);
- scg_y_filtered = filtfilt(b,a, scg_y);
-scg_z_filtered = filtfilt(b,a, scg_z);
+% scg_x_filtered = filtfilt(b,a, scg_x);
+%  scg_y_filtered = filtfilt(b,a, scg_y);
+% scg_z_filtered = filtfilt(b,a, scg_z);
 
 
 figure;

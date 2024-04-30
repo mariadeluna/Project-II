@@ -9,9 +9,7 @@ dataArray = table2array(data);
 
 
 t = data{1500:3800, 1}; 
-subs =diff(t);
-sample_interval=mean(subs);
- Fs=1/sample_interval;
+ Fs=100;
 
 
 
@@ -21,7 +19,7 @@ scg_z=data{1500:3800, 2};
 
 % Design a bandpass filter using the designfilt function
 bpFilt = designfilt('bandpassiir', 'FilterOrder', 6, ...
-         'HalfPowerFrequency1', 0.3, 'HalfPowerFrequency2', 5, ...
+         'HalfPowerFrequency1', 0.3, 'HalfPowerFrequency2', 20, ...
          'SampleRate', Fs); 
 
 % Apply the filter

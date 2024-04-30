@@ -6,6 +6,12 @@ dataArray = table2array(data);
 
 ECGdata=dataArray(5000:12000, 6); % Choose only relevant channels
 
+% Center the ECG signal. Adjust the signal so that its average value is
+% zero. Substracting the average from every point of the signal shifts the
+% signal vertically.
+meanECG=mean(ECGdata);
+ECGdata=ECGdata-meanECG;
+
 Fs=1000; % Used to record the signal
 f_c=40;
 Wn = f_c/(Fs/2); % Normalize
@@ -23,7 +29,7 @@ figure;
 subplot(4,1,1); 
 plot(t,ecg_filtered);
 xlabel('Time (s)');
-ylabel('Amplitude');
+ylabel('mV');
 title('ECG Signal');
 
 
