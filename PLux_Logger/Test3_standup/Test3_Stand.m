@@ -100,7 +100,53 @@ axis tight;
 
 
 linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
+% FFT
 
+window_scg_x=dataArrayPlux(35000:65000, 3); 
+window_scg_y=dataArrayPlux(35000:65000, 4);
+window_scg_z=dataArrayPlux(35000:65000, 5); 
+
+scg_x_filtered = filtfilt(bpFilt, window_scg_x);
+scg_y_filtered = filtfilt(bpFilt, window_scg_y);
+scg_z_filtered = filtfilt(bpFilt, window_scg_z);
+
+% Compute the FFT
+fft_scg_x = fft(scg_x_filtered);
+fft_scg_y = fft(scg_y_filtered);
+fft_scg_z = fft(scg_z_filtered);
+
+L = length(window_scg_x);  % Length of the signal
+
+% Compute the one-sided spectrum
+P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
+P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
+P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
+
+
+% Create a frequency vector for one-sided spectrum
+f_one_sided = Fs*(0:(floor(L/2)))/L;
+
+% Find indices corresponding to frequencies up to 30 Hz
+idx = f_one_sided <= 30;
+
+
+% Plot the one-sided amplitude spectrum.
+figure;
+subplot(3,1,1);
+plot(f_one_sided(idx), P1_x(idx));
+title(' Spectrum SCG BioPLux');
+xlabel('Frequency (Hz)');
+ylabel('|P1_x(f)|');
+
+subplot(3,1,2);
+plot(f_one_sided(idx), P1_y(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P1_y(f)|');
+
+subplot(3,1,3);
+plot(f_one_sided(idx), P1_z(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P1_z(f)|');
 
 % SENSOR LOGGER
 
@@ -183,6 +229,57 @@ axis tight;
 linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 
+
+% FFT
+
+window_scg_x=dataArrayPlux(300:1000, 3); 
+window_scg_y=dataArrayPlux(300:1000, 4);
+window_scg_z=dataArrayPlux(300:1000, 5); 
+
+scg_x_filtered = filtfilt(bpFilt, window_scg_x);
+scg_y_filtered = filtfilt(bpFilt, window_scg_y);
+scg_z_filtered = filtfilt(bpFilt, window_scg_z);
+
+% Compute the FFT
+fft_scg_x = fft(scg_x_filtered);
+fft_scg_y = fft(scg_y_filtered);
+fft_scg_z = fft(scg_z_filtered);
+
+L = length(window_scg_x);  % Length of the signal
+
+% Compute the one-sided spectrum
+P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
+P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
+P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
+
+
+% Create a frequency vector for one-sided spectrum
+f_one_sided = Fs*(0:(floor(L/2)))/L;
+
+% Find indices corresponding to frequencies up to 30 Hz
+idx = f_one_sided <= 30;
+
+
+% Plot the one-sided amplitude spectrum.
+figure;
+subplot(3,1,1);
+plot(f_one_sided(idx), P1_x(idx));
+title(' Spectrum SCG Headphones');
+xlabel('Frequency (Hz)');
+ylabel('|P1_x(f)|');
+
+subplot(3,1,2);
+plot(f_one_sided(idx), P1_y(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P1_y(f)|');
+
+subplot(3,1,3);
+plot(f_one_sided(idx), P1_z(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P1_z(f)|');
+
+
+
 % Mobile phone on the shoulder
 
 name = 'Accelerometer.csv';
@@ -238,7 +335,6 @@ ylabel('(m/s^2)');
 axis tight;
 
 
-
 ax4=subplot(5,1,4); % Third graphic
 plot(t2, scg_z_filtered);
 title('Acceleration in Z');
@@ -257,3 +353,50 @@ axis tight;
 
 linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
+% FFT
+
+window_scg_x=dataArrayPlux(300:1000, 3); 
+window_scg_y=dataArrayPlux(300:1000, 4);
+window_scg_z=dataArrayPlux(300:1000, 5); 
+
+scg_x_filtered = filtfilt(bpFilt, window_scg_x);
+scg_y_filtered = filtfilt(bpFilt, window_scg_y);
+scg_z_filtered = filtfilt(bpFilt, window_scg_z);
+
+% Compute the FFT
+fft_scg_x = fft(scg_x_filtered);
+fft_scg_y = fft(scg_y_filtered);
+fft_scg_z = fft(scg_z_filtered);
+
+L = length(window_scg_x);  % Length of the signal
+
+% Compute the one-sided spectrum
+P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
+P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
+P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
+
+
+% Create a frequency vector for one-sided spectrum
+f_one_sided = Fs*(0:(floor(L/2)))/L;
+
+% Find indices corresponding to frequencies up to 30 Hz
+idx = f_one_sided <= 30;
+
+
+% Plot the one-sided amplitude spectrum.
+figure;
+subplot(3,1,1);
+plot(f_one_sided(idx), P1_x(idx));
+title(' Spectrum SCG Mobile Phone');
+xlabel('Frequency (Hz)');
+ylabel('|P1_x(f)|');
+
+subplot(3,1,2);
+plot(f_one_sided(idx), P1_y(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P1_y(f)|');
+
+subplot(3,1,3);
+plot(f_one_sided(idx), P1_z(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P1_z(f)|');

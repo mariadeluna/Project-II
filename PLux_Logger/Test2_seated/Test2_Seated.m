@@ -120,36 +120,36 @@ fft_scg_z = fft(scg_z_filtered);
 
 L = length(window_scg_x);  % Length of the signal
 
-% Compute the two-sided spectrum
-P2_x = abs(fft_scg_x/L);
-P2_y = abs(fft_scg_y/L);
-P2_z = abs(fft_scg_z/L);
+% Compute the one-sided spectrum
+P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
+P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
+P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
 
-% Create a frequency vector for two-sided spectrum
-f_shifted = Fs*(-L/2:L/2-1)/L;  % Frequency vector shifted for plotting
 
-% Shift zero-frequency component to center of spectrum
-P2_x_shifted = fftshift(P2_x);
-P2_y_shifted = fftshift(P2_y);
-P2_z_shifted = fftshift(P2_z);
+% Create a frequency vector for one-sided spectrum
+f_one_sided = Fs*(0:(floor(L/2)))/L;
 
-% Plot the two-sided amplitude spectrum.
+% Find indices corresponding to frequencies up to 30 Hz
+idx = f_one_sided <= 30;
+
+
+% Plot the one-sided amplitude spectrum.
 figure;
 subplot(3,1,1);
-plot(f_shifted, P2_x_shifted);
-title('Amplitude Spectrum SCG BioPLux');
+plot(f_one_sided(idx), P1_x(idx));
+title(' Spectrum SCG BioPLux');
 xlabel('Frequency (Hz)');
-ylabel('|P2_x(f)|');
+ylabel('|P1_x(f)|');
 
 subplot(3,1,2);
-plot(f_shifted, P2_y_shifted);
+plot(f_one_sided(idx), P1_y(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P2_y(f)|');
+ylabel('|P1_y(f)|');
 
 subplot(3,1,3);
-plot(f_shifted, P2_z_shifted);
+plot(f_one_sided(idx), P1_z(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P2_z(f)|');
+ylabel('|P1_z(f)|');
 
 
 % SENSOR LOGGER
@@ -232,10 +232,9 @@ linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
  
 % FFT
 
-
-window_scg_x=dataArray(300:1000, 3 );
-window_scg_y=dataArray(300:1000, 4);
-window_scg_z=dataArray(300:1000, 2 );
+window_scg_x=dataArrayPlux(300:1000, 3); 
+window_scg_y=dataArrayPlux(300:1000, 4);
+window_scg_z=dataArrayPlux(300:1000, 5); 
 
 scg_x_filtered = filtfilt(bpFilt, window_scg_x);
 scg_y_filtered = filtfilt(bpFilt, window_scg_y);
@@ -248,37 +247,36 @@ fft_scg_z = fft(scg_z_filtered);
 
 L = length(window_scg_x);  % Length of the signal
 
-% Compute the two-sided spectrum
-P2_x = abs(fft_scg_x/L);
-P2_y = abs(fft_scg_y/L);
-P2_z = abs(fft_scg_z/L);
+% Compute the one-sided spectrum
+P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
+P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
+P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
 
-% Create a frequency vector for two-sided spectrum
-f_shifted = Fs*(-L/2:L/2-1)/L;  % Frequency vector shifted for plotting
 
-% Shift zero-frequency component to center of spectrum
-P2_x_shifted = fftshift(P2_x);
-P2_y_shifted = fftshift(P2_y);
-P2_z_shifted = fftshift(P2_z);
+% Create a frequency vector for one-sided spectrum
+f_one_sided = Fs*(0:(floor(L/2)))/L;
 
-% Plot the two-sided amplitude spectrum.
+% Find indices corresponding to frequencies up to 30 Hz
+idx = f_one_sided <= 30;
+
+
+% Plot the one-sided amplitude spectrum.
 figure;
 subplot(3,1,1);
-plot(f_shifted, P2_x_shifted);
-title('Amplitude Spectrum SCG Headphones');
+plot(f_one_sided(idx), P1_x(idx));
+title(' Spectrum SCG Headphones');
 xlabel('Frequency (Hz)');
-ylabel('|P2_x(f)|');
+ylabel('|P1_x(f)|');
 
 subplot(3,1,2);
-plot(f_shifted, P2_y_shifted);
+plot(f_one_sided(idx), P1_y(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P2_y(f)|');
+ylabel('|P1_y(f)|');
 
 subplot(3,1,3);
-plot(f_shifted, P2_z_shifted);
+plot(f_one_sided(idx), P1_z(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P2_z(f)|');
-
+ylabel('|P1_z(f)|');
 
 
 
@@ -359,10 +357,9 @@ linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 % FFT
 
-
-window_scg_x=dataArray(300:1000, 3 );
-window_scg_y=dataArray(300:1000, 4);
-window_scg_z=dataArray(300:1000, 2 );
+window_scg_x=dataArrayPlux(300:1000, 3); 
+window_scg_y=dataArrayPlux(300:1000, 4);
+window_scg_z=dataArrayPlux(300:1000, 5); 
 
 scg_x_filtered = filtfilt(bpFilt, window_scg_x);
 scg_y_filtered = filtfilt(bpFilt, window_scg_y);
@@ -375,34 +372,33 @@ fft_scg_z = fft(scg_z_filtered);
 
 L = length(window_scg_x);  % Length of the signal
 
-% Compute the two-sided spectrum
-P2_x = abs(fft_scg_x/L);
-P2_y = abs(fft_scg_y/L);
-P2_z = abs(fft_scg_z/L);
+% Compute the one-sided spectrum
+P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
+P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
+P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
 
-% Create a frequency vector for two-sided spectrum
-f_shifted = Fs*(-L/2:L/2-1)/L;  % Frequency vector shifted for plotting
 
-% Shift zero-frequency component to center of spectrum
-P2_x_shifted = fftshift(P2_x);
-P2_y_shifted = fftshift(P2_y);
-P2_z_shifted = fftshift(P2_z);
+% Create a frequency vector for one-sided spectrum
+f_one_sided = Fs*(0:(floor(L/2)))/L;
 
-% Plot the two-sided amplitude spectrum.
+% Find indices corresponding to frequencies up to 30 Hz
+idx = f_one_sided <= 30;
+
+
+% Plot the one-sided amplitude spectrum.
 figure;
 subplot(3,1,1);
-plot(f_shifted, P2_x_shifted);
-title('Amplitude Spectrum SCG Mobile Phone');
+plot(f_one_sided(idx), P1_x(idx));
+title(' Spectrum SCG Mobile Phone');
 xlabel('Frequency (Hz)');
-ylabel('|P2_x(f)|');
+ylabel('|P1_x(f)|');
 
 subplot(3,1,2);
-plot(f_shifted, P2_y_shifted);
+plot(f_one_sided(idx), P1_y(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P2_y(f)|');
+ylabel('|P1_y(f)|');
 
 subplot(3,1,3);
-plot(f_shifted, P2_z_shifted);
+plot(f_one_sided(idx), P1_z(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P2_z(f)|');
-
+ylabel('|P1_z(f)|');
