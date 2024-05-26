@@ -1,11 +1,10 @@
-% BIOPLUX
+
+%------------------------% BIOPLUX %-----------------------------%
 
 name = 'opensignals_0007804C2AF7_2024-04-15_20-35-21.txt';
 
 data = readtable(name);
 dataArrayPlux = table2array(data);
-
-
 
 
 %36':41'' - 36':37.381'' = 3619 milliseconds
@@ -97,25 +96,27 @@ xlabel('Time (s)');
 ylabel('Acceleration (m/s^2)');
 axis tight;
 
-
 linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 
+% SPECTRAL POWER
 
-% FFT
-
-window_scg_x=dataArrayPlux(40000:70000, 3); 
-window_scg_y=dataArrayPlux(40000:70000, 4);
-window_scg_z=dataArrayPlux(40000:70000, 5); 
+window_scg_x=dataArrayPlux(30000:65000, 3); 
+window_scg_y=dataArrayPlux(30000:65000, 4);
+window_scg_z=dataArrayPlux(30000:65000, 5); 
 
 scg_x_filtered = filtfilt(bpFilt, window_scg_x);
 scg_y_filtered = filtfilt(bpFilt, window_scg_y);
 scg_z_filtered = filtfilt(bpFilt, window_scg_z);
 
+module = sqrt(scg_x_filtered.^2 + scg_y_filtered.^2 + scg_z_filtered.^2);
+
+
 % Compute the FFT
 fft_scg_x = fft(scg_x_filtered);
 fft_scg_y = fft(scg_y_filtered);
 fft_scg_z = fft(scg_z_filtered);
+fft_scg_module = fft(module);
 
 L = length(window_scg_x);  % Length of the signal
 
@@ -123,7 +124,7 @@ L = length(window_scg_x);  % Length of the signal
 P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
 P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
 P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
-
+P1_m = abs(fft_scg_module(1:floor(L/2)+1))/L;
 
 % Create a frequency vector for one-sided spectrum
 f_one_sided = Fs*(0:(floor(L/2)))/L;
@@ -131,31 +132,67 @@ f_one_sided = Fs*(0:(floor(L/2)))/L;
 % Find indices corresponding to frequencies up to 30 Hz
 idx = f_one_sided <= 30;
 
+% Find indices corresponding to the 0.8 to 1.8 Hz band
+idx_band = f_one_sided >= 0.8 & f_one_sided <= 1.8;
+
+
+% Calculate total spectral power for each axis
+total_power_x = sum(P1_x.^2);
+total_power_y = sum(P1_y.^2);
+total_power_z = sum(P1_z.^2);
+total_power_mod = sum(P1_m.^2);
+
+% Calculate spectral power in the 0.8 to 1.8 Hz band for each axis
+band_power_x = sum(P1_x(idx_band).^2);
+band_power_y = sum(P1_y(idx_band).^2);
+band_power_z = sum(P1_z(idx_band).^2);
+band_power_m = sum(P1_m(idx_band).^2);
+
+% Calculate the ratio of band power to total power
+ratio_x = band_power_x / total_power_x;
+ratio_y = band_power_y / total_power_y;
+ratio_z = band_power_z / total_power_z;
+ratio_m = band_power_m / total_power_mod;
+
+% Display the ratios
+disp('Ratio Calculation BioPlux:')
+disp(['Ratio X-axis: ', num2str(ratio_x)]);
+disp(['Ratio Y-axis: ', num2str(ratio_y)]);
+disp(['Ratio Z-axis: ', num2str(ratio_z)]);
+disp(['Ratio of the module: ', num2str(ratio_m)]);
+
 
 % Plot the one-sided amplitude spectrum.
 figure;
-subplot(3,1,1);
+subplot(4,1,1);
 plot(f_one_sided(idx), P1_x(idx));
 title(' Spectrum SCG BioPLux');
 xlabel('Frequency (Hz)');
-ylabel('|P1_x(f)|');
+ylabel('|P_x(f)|');
 
-subplot(3,1,2);
+subplot(4,1,2);
 plot(f_one_sided(idx), P1_y(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P1_y(f)|');
+ylabel('|P_y(f)|');
 
-subplot(3,1,3);
+subplot(4,1,3);
 plot(f_one_sided(idx), P1_z(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P1_z(f)|');
+ylabel('|P_z(f)|');
+
+
+subplot(4,1,4);
+plot(f_one_sided(idx), P1_m(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P_module(f)|');
 
 
 
-% SENSOR LOGGER
+
+%------------------------% SENSOR LOGGER %-----------------------------%
 
 
-% Headphones
+%------ Headphones %-------%
 
 name = 'Headphone.csv';
 
@@ -231,20 +268,25 @@ axis tight;
 
 linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
  
-% FFT
 
-window_scg_x=dataArrayPlux(500:1200, 3); 
-window_scg_y=dataArrayPlux(500:1200, 4);
-window_scg_z=dataArrayPlux(500:1200, 5); 
+% SPECTRAL POWER
+
+window_scg_x=dataArray(634:1401, 3); 
+window_scg_y=dataArray(634:1401, 4);
+window_scg_z=dataArray(634:1401, 2); 
 
 scg_x_filtered = filtfilt(bpFilt, window_scg_x);
 scg_y_filtered = filtfilt(bpFilt, window_scg_y);
 scg_z_filtered = filtfilt(bpFilt, window_scg_z);
 
+module = sqrt(scg_x_filtered.^2 + scg_y_filtered.^2 + scg_z_filtered.^2);
+
+
 % Compute the FFT
 fft_scg_x = fft(scg_x_filtered);
 fft_scg_y = fft(scg_y_filtered);
 fft_scg_z = fft(scg_z_filtered);
+fft_scg_module = fft(module);
 
 L = length(window_scg_x);  % Length of the signal
 
@@ -252,7 +294,7 @@ L = length(window_scg_x);  % Length of the signal
 P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
 P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
 P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
-
+P1_m = abs(fft_scg_module(1:floor(L/2)+1))/L;
 
 % Create a frequency vector for one-sided spectrum
 f_one_sided = Fs*(0:(floor(L/2)))/L;
@@ -260,28 +302,62 @@ f_one_sided = Fs*(0:(floor(L/2)))/L;
 % Find indices corresponding to frequencies up to 30 Hz
 idx = f_one_sided <= 30;
 
+% Find indices corresponding to the 0.8 to 1.8 Hz band
+idx_band = f_one_sided >= 0.8 & f_one_sided <= 1.8;
+
+
+% Calculate total spectral power for each axis
+total_power_x = sum(P1_x.^2);
+total_power_y = sum(P1_y.^2);
+total_power_z = sum(P1_z.^2);
+total_power_mod = sum(P1_m.^2);
+
+% Calculate spectral power in the 0.8 to 1.8 Hz band for each axis
+band_power_x = sum(P1_x(idx_band).^2);
+band_power_y = sum(P1_y(idx_band).^2);
+band_power_z = sum(P1_z(idx_band).^2);
+band_power_m = sum(P1_m(idx_band).^2);
+
+% Calculate the ratio of band power to total power
+ratio_x = band_power_x / total_power_x;
+ratio_y = band_power_y / total_power_y;
+ratio_z = band_power_z / total_power_z;
+ratio_m = band_power_m / total_power_mod;
+
+% Display the ratios
+disp('Ratio Calculation Headphones:')
+disp(['Ratio X-axis: ', num2str(ratio_x)]);
+disp(['Ratio Y-axis: ', num2str(ratio_y)]);
+disp(['Ratio Z-axis: ', num2str(ratio_z)]);
+disp(['Ratio of the module: ', num2str(ratio_m)]);
 
 % Plot the one-sided amplitude spectrum.
 figure;
-subplot(3,1,1);
+subplot(4,1,1);
 plot(f_one_sided(idx), P1_x(idx));
 title(' Spectrum SCG Headphones');
 xlabel('Frequency (Hz)');
-ylabel('|P1_x(f)|');
+ylabel('|P_x(f)|');
 
-subplot(3,1,2);
+
+subplot(4,1,2);
 plot(f_one_sided(idx), P1_y(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P1_y(f)|');
+ylabel('|P_y(f)|');
 
-subplot(3,1,3);
+subplot(4,1,3);
 plot(f_one_sided(idx), P1_z(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P1_z(f)|');
+ylabel('|P_z(f)|');
 
 
+subplot(4,1,4);
+plot(f_one_sided(idx), P1_m(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P_module(f)|');
 
-% Mobile phone on the shoulder
+
+%------% Mobile phone on the shoulder %------%
 
 name = 'Accelerometer.csv';
 
@@ -354,20 +430,23 @@ axis tight;
 linkaxes([ax1, ax2, ax3, ax4, ax5], 'x');
 
 
-% FFT
-
-window_scg_x=dataArrayPlux(500:1200, 3); 
-window_scg_y=dataArrayPlux(500:1200, 4);
-window_scg_z=dataArrayPlux(500:1200, 5); 
+% SPECTRAL POWER
+window_scg_x=dataArray(634:1401, 3); 
+window_scg_y=dataArray(634:1401, 4);
+window_scg_z=dataArray(634:1401, 2); 
 
 scg_x_filtered = filtfilt(bpFilt, window_scg_x);
 scg_y_filtered = filtfilt(bpFilt, window_scg_y);
 scg_z_filtered = filtfilt(bpFilt, window_scg_z);
 
+module = sqrt(scg_x_filtered.^2 + scg_y_filtered.^2 + scg_z_filtered.^2);
+
+
 % Compute the FFT
 fft_scg_x = fft(scg_x_filtered);
 fft_scg_y = fft(scg_y_filtered);
 fft_scg_z = fft(scg_z_filtered);
+fft_scg_module = fft(module);
 
 L = length(window_scg_x);  % Length of the signal
 
@@ -375,7 +454,7 @@ L = length(window_scg_x);  % Length of the signal
 P1_x = abs(fft_scg_x(1:floor(L/2)+1))/L;
 P1_y = abs(fft_scg_y(1:floor(L/2)+1))/L;
 P1_z = abs(fft_scg_z(1:floor(L/2)+1))/L;
-
+P1_m = abs(fft_scg_module(1:floor(L/2)+1))/L;
 
 % Create a frequency vector for one-sided spectrum
 f_one_sided = Fs*(0:(floor(L/2)))/L;
@@ -383,21 +462,56 @@ f_one_sided = Fs*(0:(floor(L/2)))/L;
 % Find indices corresponding to frequencies up to 30 Hz
 idx = f_one_sided <= 30;
 
+% Find indices corresponding to the 0.8 to 1.8 Hz band
+idx_band = f_one_sided >= 0.8 & f_one_sided <= 1.8;
+
+
+% Calculate total spectral power for each axis
+total_power_x = sum(P1_x.^2);
+total_power_y = sum(P1_y.^2);
+total_power_z = sum(P1_z.^2);
+total_power_mod = sum(P1_m.^2);
+
+% Calculate spectral power in the 0.8 to 1.8 Hz band for each axis
+band_power_x = sum(P1_x(idx_band).^2);
+band_power_y = sum(P1_y(idx_band).^2);
+band_power_z = sum(P1_z(idx_band).^2);
+band_power_m = sum(P1_m(idx_band).^2);
+
+% Calculate the ratio of band power to total power
+ratio_x = band_power_x / total_power_x;
+ratio_y = band_power_y / total_power_y;
+ratio_z = band_power_z / total_power_z;
+ratio_m = band_power_m / total_power_mod;
+
+% Display the ratios
+disp('Ratio Calculation Mobile Phone:')
+disp(['Ratio X-axis: ', num2str(ratio_x)]);
+disp(['Ratio Y-axis: ', num2str(ratio_y)]);
+disp(['Ratio Z-axis: ', num2str(ratio_z)]);
+disp(['Ratio of the module: ', num2str(ratio_m)]);
+
 
 % Plot the one-sided amplitude spectrum.
 figure;
-subplot(3,1,1);
+subplot(4,1,1);
 plot(f_one_sided(idx), P1_x(idx));
 title(' Spectrum SCG Mobile Phone');
 xlabel('Frequency (Hz)');
-ylabel('|P1_x(f)|');
+ylabel('|P_x(f)|');
 
-subplot(3,1,2);
+subplot(4,1,2);
 plot(f_one_sided(idx), P1_y(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P1_y(f)|');
+ylabel('|P_y(f)|');
 
-subplot(3,1,3);
+subplot(4,1,3);
 plot(f_one_sided(idx), P1_z(idx));
 xlabel('Frequency (Hz)');
-ylabel('|P1_z(f)|');
+ylabel('|P_z(f)|');
+
+
+subplot(4,1,4);
+plot(f_one_sided(idx), P1_m(idx));
+xlabel('Frequency (Hz)');
+ylabel('|P_module(f)|');
